@@ -299,19 +299,19 @@ def cria_prado(d, r, a, p):
         raise ValueError('cria_prado: argumentos invalidos')
     for rochedo in r:
         if not eh_posicao(rochedo) or obter_pos_x(rochedo) == 0 or obter_pos_x(rochedo) >= obter_pos_x(d) or \
-                obter_pos_y(rochedo) == 0 or obter_pos_y(rochedo) >= obter_pos_y(d) or rochedo in p:
+                obter_pos_y(rochedo) == 0 or obter_pos_y(rochedo) >= obter_pos_y(d):
             raise ValueError('cria_prado: argumentos invalidos')
+    for ind_r in range(len(r)):       # se a mesma pos tiver rochedo e animal
+        for ind_p in range(len(p)):
+            if posicoes_iguais(r[ind_r], p[ind_p]):                 # QUEBRA ABSTRAÇÃO PROCEDIMENTAL?
+                raise ValueError('cria_prado: argumentos invalidos')
     for animal in a:
         if not eh_animal(animal):
             raise ValueError('cria_prado: argumentos invalidos')
-
     for pos in p:
         if not eh_posicao(pos) or obter_pos_x(pos) == 0 or obter_pos_x(pos) >= obter_pos_x(d) or obter_pos_y(pos) == 0\
                 or obter_pos_y(pos) >= obter_pos_y(d):
             raise ValueError('cria_prado: argumentos invalidos')
-    #for pos in p:
-      #  if pos in p[p.index(pos) + 1:]:  # se houverem 2 ou + animais na mesma posicao
-        #    raise ValueError('cria_prado: argumentos invalidos')
     for i in range(len(p) - 1):
         for e in range(i + 1, len(p)):
             if posicoes_iguais(p[i], p[e]):     # se houverem 2 ou + animais na mesma posicao
@@ -432,15 +432,32 @@ def eh_prado(arg):
     Reconhecedor
     Devolve True se o argumento é um TAD prado.
     """
-    return type(arg) == dict and len(arg) == 4 and (('mapa' and 'rochedos' and 'animais' and 'pos_animais') in arg) \
-            and eh_posicao(arg['mapa']) and type(arg['rochedos']) == tuple and (eh_posicao(rochedo) and \
-            0 < obter_pos_x(rochedo) < obter_pos_x(arg['mapa']) and 0 < obter_pos_y(rochedo) < obter_pos_y(arg['mapa'])\
-             and rochedo not in arg['pos_animais'] for rochedo in arg['rochedos']) and type(arg['animais']) == list \
-            and len(arg['animais']) >= 1 and (eh_animal(animal) for animal in arg['animais']) \
-            and type(arg['pos_animais']) == list and len(arg['pos_animais']) == len(arg['animais']) \
-            and (eh_posicao(pos) and 0 < obter_pos_x(pos) < obter_pos_x(arg['mapa']) and \
-            0 < obter_pos_y(pos) < obter_pos_y(arg['mapa']) and pos not in \
-            arg['pos_animais'][arg['pos_animais'].index(pos) + 1:] for pos in arg['pos_animais'])
+    if type(arg) != dict and len(arg) != 4 and (('mapa' and 'rochedos' and 'animais' and 'pos_animais') not in arg):
+        return False
+    if not eh_posicao(arg['mapa']) or type(arg['rochedos']) != tuple or type(arg['animais']) != list or len(arg['animais']) < 1 or type(arg['pos_animais']) != list or len(arg['pos_animais']) != len(arg['animais']):
+        return False
+    for rochedo in arg['rochedos']:
+        if not eh_posicao(rochedo) or obter_pos_x(rochedo) == 0 or obter_pos_x(rochedo) >= obter_pos_x(arg['mapa']) or \
+                obter_pos_y(rochedo) == 0 or obter_pos_y(rochedo) >= obter_pos_y(arg['mapa']):
+            return False
+    for ind_r in range(len(arg['rochedos'])):       # se a mesma pos tiver rochedo e animal
+        for ind_pos_a in range(len(arg['pos_animais'])):
+            if posicoes_iguais(arg['rochedos'][ind_roch], arg['pos_animais'][ind_pos_a]):
+                return False
+    for animal in arg['animais']:
+        if not eh_animal(animal):
+            return False
+    for pos in arg['pos_animais']:
+        if not eh_posicao(pos) or obter_pos_x(pos) == 0 or obter_pos_x(pos) >= obter_pos_x(arg['mapa']) or obter_pos_y(pos) == 0\
+                or obter_pos_y(pos) >= obter_pos_y(arg['mapa']):
+            return False
+    for i in range(len(arg['pos_animais']) - 1):
+        for e in range(i + 1, len(arg['pos_animais'])):
+            if posicoes_iguais(arg['pos_animais'][i], arg['pos_animais'][e]):     # se houverem 2 ou + animais na mesma posicao
+                return False
+    return True
+
+
 
 
 def eh_posicao_animal(m, p):
@@ -463,8 +480,7 @@ def eh_posicao_obstaculo(m, p):
     Devolve True se a posicao p corresponde a uma montanha ou rochedo.
     """
     return obter_pos_x(p) == 0 or obter_pos_y(p) == 0 or obter_pos_x(p) == obter_pos_x(m['mapa']) or \
-           obter_pos_y(p) == obter_pos_y(m['mapa']) or p in m['rochedos']
-          # (posicoes_iguais(m['rochedos'][i], p) for i in range(len(m['rochedos'])))
+           obter_pos_y(p) == obter_pos_y(m['mapa']) or p in m['rochedos']   # (posicoes_iguais(m['rochedos'][i], p) for i in range(len(m['rochedos'])))
 # p in m['rochedos']
 
 
@@ -566,6 +582,3 @@ def geracao(m):
         if eh_animal_faminto(a):
             eliminar_animal(m, pos_f)       # morre ah fome
     return m
-
-
-
