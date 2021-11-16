@@ -559,10 +559,10 @@ def obter_movimento(m, p):
         for pos in pos_adj:
             if eh_posicao_animal(m, pos) and eh_presa(obter_animal(m, pos)):
                 pos_presas += [pos]  # o predador come as presas, ocupando as suas pos
-        if pos_presas != []:
+        if pos_presas:
             return pos_presas[obter_valor_numerico(m, p) % len(pos_presas)]  # ponho um ELSE?
     pos_livres = list(filter(lambda x: eh_posicao_livre(m, x), pos_adj))
-    if pos_livres != []:
+    if pos_livres:
         return pos_livres[obter_valor_numerico(m, p) % len(pos_livres)]  # resto de valor de pos atual//num pos livres
     return p  # quando nao ha posicoes livres, nao se move
 
@@ -600,5 +600,34 @@ def simula_ecossistema(f, g, v):
     simula_ecossistema: str x int x booleano → tuplo
 
     """
+    def str_para_posicao(cadeia):
+        """
+        str -> posicao
+        Funcao auxiliar que devolve a posicao correspondente ah cad. de caracteres.
+        """
+        return cria_posicao(eval(cadeia[1]), eval(cadeia[-2]))
 
+    def escreve_geracao(prado, geracao):
+        """
+        prado x int -> str
+        Funcao auxiliar que
+        """
+        return f'Predadores: {obter_numero_predadores(prado)} vs Presas: {obter_numero_presas(prado)} \
+(Gen. {geracao})\n' + prado_para_str(prado)
 
+    with open(f, 'r') as fich_config:
+        linha1 = fich_config.readline()[:-1]  # tira \n da linha
+        limite = str_para_posicao(linha1)
+        linha2 = eval(fich_config.readline()[:-1])
+        rochedos = ()
+        for rochedo_em_str in linha2:
+            rochedos += (str_para_posicao(rochedo_em_str),)
+        linhas_animais = fich_config.readlines()[:-1]
+        animais = ()
+        pos_animais = ()
+        for linha_animal in linhas_animais:
+            animais += (cria_animal(eval(linha_animal)[0], eval(linha_animal)[1], eval(linha_animal)[2]),)
+            pos_animais += (str_para_posicao(eval(linha_animal)[3]))
+
+    prado = cria_prado(limite, rochedos, animais, pos_animais)
+    inicio_simulacao = escreve_geracao(prado, 0) + '\n'
