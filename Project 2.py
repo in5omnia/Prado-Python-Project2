@@ -297,28 +297,10 @@ def reproduz_animal(a):
 
 
 def cria_prado(d, r, a, p):
-    if not eh_posicao(d) or type(r) != tuple or type(a) != tuple or len(a) < 1 or type(p) != tuple or len(p) != len(a):
+    prado = {'mapa': d, 'rochedos': r, 'animais': list(a), 'pos_animais': list(p)}
+    if not eh_prado(prado):
         raise ValueError('cria_prado: argumentos invalidos')
-    for rochedo in r:
-        if not eh_posicao(rochedo) or not (0 < obter_pos_x(rochedo) < obter_pos_x(d)) or \
-                not (0 < obter_pos_y(rochedo) < obter_pos_y(d)):
-            raise ValueError('cria_prado: argumentos invalidos')
-    for ind_r in range(len(r)):  # se a mesma pos tiver rochedo e animal
-        for ind_p in range(len(p)):
-            if posicoes_iguais(r[ind_r], p[ind_p]):  # QUEBRA ABSTRAÇÃO PROCEDIMENTAL?
-                raise ValueError('cria_prado: argumentos invalidos')
-    for animal in a:
-        if not eh_animal(animal):
-            raise ValueError('cria_prado: argumentos invalidos')
-    for pos in p:
-        if not eh_posicao(pos) or not (0 < obter_pos_x(pos) < obter_pos_x(d)) or \
-                not (0 < obter_pos_y(pos) < obter_pos_y(d)):
-            raise ValueError('cria_prado: argumentos invalidos')
-    for i in range(len(p) - 1):
-        for e in range(i + 1, len(p)):
-            if posicoes_iguais(p[i], p[e]):  # se houverem 2 ou + animais na mesma posicao
-                raise ValueError('cria_prado: argumentos invalidos')
-    return {'mapa': d, 'rochedos': r, 'animais': list(a), 'pos_animais': list(p)}  # animais e suas posicoes em listas
+    return prado  # animais e suas posicoes em listas
 
 
 def cria_copia_prado(m):
@@ -612,4 +594,5 @@ def simula_ecossistema(f, g, v):
     simula_ecossistema: str x int x booleano → tuplo
 
     """
-    
+
+
