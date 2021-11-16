@@ -479,9 +479,13 @@ def eh_posicao_obstaculo(m, p):
     Reconhecedor
     Devolve True se a posicao p corresponde a uma montanha ou rochedo.
     """
-    return obter_pos_x(p) == 0 or obter_pos_y(p) == 0 or obter_pos_x(p) == obter_pos_x(m['mapa']) or \
-           obter_pos_y(p) == obter_pos_y(m['mapa']) or p in m['rochedos']   # (posicoes_iguais(m['rochedos'][i], p) for i in range(len(m['rochedos'])))
-# p in m['rochedos']
+    if obter_pos_x(p) == 0 or obter_pos_y(p) == 0 or obter_pos_x(p) == obter_pos_x(m['mapa']) or \
+           obter_pos_y(p) == obter_pos_y(m['mapa']):    # p eh a pos de uma montanha
+        return True
+    for ind_r in range(len(m['rochedos'])):
+        if posicoes_iguais(p, m['rochedos'][ind_r]):    # p eh a pos de um rochedo
+            return True
+    return False
 
 
 def eh_posicao_livre(m, p):
@@ -582,3 +586,4 @@ def geracao(m):
         if eh_animal_faminto(a):
             eliminar_animal(m, pos_f)       # morre ah fome
     return m
+
