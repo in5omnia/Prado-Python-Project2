@@ -298,7 +298,8 @@ def cria_prado(d, r, a, p):
     if not eh_posicao(d) or type(r) != tuple or type(a) != tuple or len(a) < 1 or type(p) != tuple or len(p) != len(a):
         raise ValueError('cria_prado: argumentos invalidos')
     for rochedo in r:
-        if not eh_posicao(rochedo) or not (0 < obter_pos_x(rochedo) < obter_pos_x(d)) or not (0 < obter_pos_y(rochedo) < obter_pos_y(d)):
+        if not eh_posicao(rochedo) or not (0 < obter_pos_x(rochedo) < obter_pos_x(d)) or \
+                not (0 < obter_pos_y(rochedo) < obter_pos_y(d)):
             raise ValueError('cria_prado: argumentos invalidos')
     for ind_r in range(len(r)):       # se a mesma pos tiver rochedo e animal
         for ind_p in range(len(p)):
@@ -308,8 +309,8 @@ def cria_prado(d, r, a, p):
         if not eh_animal(animal):
             raise ValueError('cria_prado: argumentos invalidos')
     for pos in p:
-        if not eh_posicao(pos) or obter_pos_x(pos) == 0 or obter_pos_x(pos) >= obter_pos_x(d) or obter_pos_y(pos) == 0\
-                or obter_pos_y(pos) >= obter_pos_y(d):
+        if not eh_posicao(pos) or not (0 < obter_pos_x(pos) < obter_pos_x(d)) or \
+                not (0 < obter_pos_y(pos) < obter_pos_y(d)):
             raise ValueError('cria_prado: argumentos invalidos')
     for i in range(len(p) - 1):
         for e in range(i + 1, len(p)):
@@ -449,8 +450,8 @@ def eh_prado(arg):
         if not eh_animal(animal):
             return False
     for pos in arg['pos_animais']:
-        if not eh_posicao(pos) or obter_pos_x(pos) == 0 or obter_pos_x(pos) >= obter_pos_x(arg['mapa']) or obter_pos_y(pos) == 0\
-                or obter_pos_y(pos) >= obter_pos_y(arg['mapa']):
+        if not eh_posicao(pos) or not (0 < obter_pos_x(pos) < obter_pos_x(arg['mapa'])) or \
+                not (0 < obter_pos_y(pos) < obter_pos_y(arg['mapa'])):
             return False
     for i in range(len(arg['pos_animais']) - 1):
         for e in range(i + 1, len(arg['pos_animais'])):
@@ -587,3 +588,11 @@ def geracao(m):
         if eh_animal_faminto(a):
             eliminar_animal(m, pos_f)       # morre ah fome
     return m
+
+
+def simula_ecossistema(f, g, v):
+    """
+    simula_ecossistema: str x int x booleano → tuplo
+
+    """
+
