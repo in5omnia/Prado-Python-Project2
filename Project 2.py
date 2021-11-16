@@ -1,4 +1,4 @@
-def cria_posicao(x, y):    # usando listas
+def cria_posicao(x, y):  # usando listas
     """
     cria_posicao: int × int → posicao
     Construtor
@@ -17,7 +17,7 @@ def cria_copia_posicao(p):
     """
     if not eh_posicao(p):
         raise ValueError('cria_copia_posicao: argumentos invalidos')
-    return p[:]                                         # OU cria_posicao(p[0], p[1])
+    return p[:]  # OU cria_posicao(p[0], p[1])
 
 
 def obter_pos_x(p):
@@ -76,11 +76,12 @@ def obter_posicoes_adjacentes(p):  # SHOULD I CHECK IF ALL THE POSITIONS EXIST? 
         return cria_posicao(1, 0), cria_posicao(0, 1)
     x = obter_pos_x(p)
     y = obter_pos_y(p)
-    if x == 0:          # nao tem posicoes ah esquerda
+    if x == 0:  # nao tem posicoes ah esquerda
         return cria_posicao(x, y - 1), cria_posicao(x + 1, y), cria_posicao(x, y + 1)
-    if y == 0:          # nao tem posicoes acima
+    if y == 0:  # nao tem posicoes acima
         return cria_posicao(x + 1, y), cria_posicao(x, y + 1), cria_posicao(x - 1, y)
     return cria_posicao(x, y - 1), cria_posicao(x + 1, y), cria_posicao(x, y + 1), cria_posicao(x - 1, y)
+
 
 def ordenar_posicoes(t):
     """
@@ -90,14 +91,14 @@ def ordenar_posicoes(t):
     lst_p = []
     for p in t:
         lst_p += [(obter_pos_y(p), obter_pos_x(p))]  # eh lido de baixo para cima, do y menor para o maior, e
-    lst_p = sorted(lst_p)                            # na mesma linha, le primeiro o menor x
+    lst_p = sorted(lst_p)  # na mesma linha, le primeiro o menor x
     for i in range(len(lst_p)):
-        lst_p[i] = cria_posicao(lst_p[i][1], lst_p[i][0])   # substituir as coordenadas pelas posicoes
+        lst_p[i] = cria_posicao(lst_p[i][1], lst_p[i][0])  # substituir as coordenadas pelas posicoes
 
     return tuple(lst_p)
 
 
-def cria_animal(s, r, a):   # usando dicionarios
+def cria_animal(s, r, a):  # usando dicionarios
     """
     cria_animal: str × int × int → animal
     Construtor
@@ -213,7 +214,8 @@ def eh_animal(arg):
     Devolve True se o seu argumento é um TAD animal.
     """
     return type(arg) == dict and len(arg) == 5 and ('especie' and 'f_reproducao' and 'f_alimentacao' and 'idade' and
-           'fome') in arg and type(arg['especie']) == str and type(arg['f_reproducao']) == int and \
+                                                    'fome') in arg and type(arg['especie']) == str and type(
+        arg['f_reproducao']) == int and \
            type(arg['idade']) == int and type(arg['f_alimentacao']) == int and type(arg['fome']) == int and \
            arg['idade'] >= 0 and arg['fome'] >= 0 and arg['f_reproducao'] > 0 and arg['f_alimentacao'] >= 0 \
            and len(arg['especie']) > 0
@@ -298,23 +300,23 @@ def cria_prado(d, r, a, p):
     if not eh_posicao(d) or type(r) != tuple or type(a) != tuple or len(a) < 1 or type(p) != tuple or len(p) != len(a):
         raise ValueError('cria_prado: argumentos invalidos')
     for rochedo in r:
-        if not eh_posicao(rochedo) or obter_pos_x(rochedo) == 0 or obter_pos_x(rochedo) >= obter_pos_x(d) or \
-                obter_pos_y(rochedo) == 0 or obter_pos_y(rochedo) >= obter_pos_y(d) or rochedo in p:
+        if not eh_posicao(rochedo) or not (0 < obter_pos_x(rochedo) < obter_pos_x(d)) or \
+                not (0 < obter_pos_y(rochedo) < obter_pos_y(d)):
             raise ValueError('cria_prado: argumentos invalidos')
+    for ind_r in range(len(r)):  # se a mesma pos tiver rochedo e animal
+        for ind_p in range(len(p)):
+            if posicoes_iguais(r[ind_r], p[ind_p]):  # QUEBRA ABSTRAÇÃO PROCEDIMENTAL?
+                raise ValueError('cria_prado: argumentos invalidos')
     for animal in a:
         if not eh_animal(animal):
             raise ValueError('cria_prado: argumentos invalidos')
-
     for pos in p:
-        if not eh_posicao(pos) or obter_pos_x(pos) == 0 or obter_pos_x(pos) >= obter_pos_x(d) or obter_pos_y(pos) == 0\
-                or obter_pos_y(pos) >= obter_pos_y(d):
+        if not eh_posicao(pos) or not (0 < obter_pos_x(pos) < obter_pos_x(d)) or \
+                not (0 < obter_pos_y(pos) < obter_pos_y(d)):
             raise ValueError('cria_prado: argumentos invalidos')
-    #for pos in p:
-      #  if pos in p[p.index(pos) + 1:]:  # se houverem 2 ou + animais na mesma posicao
-        #    raise ValueError('cria_prado: argumentos invalidos')
     for i in range(len(p) - 1):
         for e in range(i + 1, len(p)):
-            if posicoes_iguais(p[i], p[e]):     # se houverem 2 ou + animais na mesma posicao
+            if posicoes_iguais(p[i], p[e]):  # se houverem 2 ou + animais na mesma posicao
                 raise ValueError('cria_prado: argumentos invalidos')
     return {'mapa': d, 'rochedos': r, 'animais': list(a), 'pos_animais': list(p)}  # animais e suas posicoes em listas
 
@@ -327,7 +329,22 @@ def cria_copia_prado(m):
     """
     if not eh_prado(m):
         raise ValueError('cria_copia_prado: argumentos invalidos')
-    return {'mapa': m['mapa'], 'rochedos': m['rochedos'], 'animais': m['animais'].copy(), 'pos_animais': m['pos_animais'].copy()}
+    rochedos = ()
+    for rochedo in m['rochedos']:
+        rochedos += (cria_copia_posicao(rochedo),)
+    animais = []
+    for animal in m['animais']:
+        animais += [cria_copia_animal(animal)]
+    pos_animais = []
+    for pos in m['pos_animais']:
+        pos_animais += [cria_copia_posicao(pos)]
+
+    return {
+        'mapa': cria_copia_posicao(m['mapa']),
+        'rochedos': rochedos,
+        'animais': animais,
+        'pos_animais': pos_animais
+    }
 
 
 def obter_tamanho_x(m):
@@ -384,7 +401,7 @@ def obter_animal(m, p):
     n_animais = len(m['pos_animais'])
     for i in range(n_animais):
         if posicoes_iguais(m['pos_animais'][i], p):
-            return m['animais'][i]      # animais e posicoes correspondentes estao na mesma ordem
+            return m['animais'][i]  # animais e posicoes correspondentes estao na mesma ordem
 
 
 def eliminar_animal(m, p):
@@ -432,15 +449,33 @@ def eh_prado(arg):
     Reconhecedor
     Devolve True se o argumento é um TAD prado.
     """
-    return type(arg) == dict and len(arg) == 4 and (('mapa' and 'rochedos' and 'animais' and 'pos_animais') in arg) \
-            and eh_posicao(arg['mapa']) and type(arg['rochedos']) == tuple and (eh_posicao(rochedo) and \
-            0 < obter_pos_x(rochedo) < obter_pos_x(arg['mapa']) and 0 < obter_pos_y(rochedo) < obter_pos_y(arg['mapa'])\
-             and rochedo not in arg['pos_animais'] for rochedo in arg['rochedos']) and type(arg['animais']) == list \
-            and len(arg['animais']) >= 1 and (eh_animal(animal) for animal in arg['animais']) \
-            and type(arg['pos_animais']) == list and len(arg['pos_animais']) == len(arg['animais']) \
-            and (eh_posicao(pos) and 0 < obter_pos_x(pos) < obter_pos_x(arg['mapa']) and \
-            0 < obter_pos_y(pos) < obter_pos_y(arg['mapa']) and pos not in \
-            arg['pos_animais'][arg['pos_animais'].index(pos) + 1:] for pos in arg['pos_animais'])
+    if type(arg) != dict and len(arg) != 4 and (('mapa' and 'rochedos' and 'animais' and 'pos_animais') not in arg):
+        return False
+    if not eh_posicao(arg['mapa']) or type(arg['rochedos']) != tuple or type(arg['animais']) != list or \
+            len(arg['animais']) < 1 or type(arg['pos_animais']) != list or \
+            len(arg['pos_animais']) != len(arg['animais']):
+        return False
+    for rochedo in arg['rochedos']:
+        if not eh_posicao(rochedo) or not (0 < obter_pos_x(rochedo) < obter_pos_x(arg['mapa'])) or \
+                not (0 < obter_pos_y(rochedo) < obter_pos_y(arg['mapa'])):
+            return False
+    for ind_r in range(len(arg['rochedos'])):  # se a mesma pos tiver rochedo e animal
+        for ind_pos_a in range(len(arg['pos_animais'])):
+            if posicoes_iguais(arg['rochedos'][ind_r], arg['pos_animais'][ind_pos_a]):
+                return False
+    for animal in arg['animais']:
+        if not eh_animal(animal):
+            return False
+    for pos in arg['pos_animais']:
+        if not eh_posicao(pos) or not (0 < obter_pos_x(pos) < obter_pos_x(arg['mapa'])) or \
+                not (0 < obter_pos_y(pos) < obter_pos_y(arg['mapa'])):
+            return False
+    for i in range(len(arg['pos_animais']) - 1):
+        for e in range(i + 1, len(arg['pos_animais'])):
+            if posicoes_iguais(arg['pos_animais'][i],
+                               arg['pos_animais'][e]):  # se houverem 2 ou + animais na mesma posicao
+                return False
+    return True
 
 
 def eh_posicao_animal(m, p):
@@ -462,10 +497,13 @@ def eh_posicao_obstaculo(m, p):
     Reconhecedor
     Devolve True se a posicao p corresponde a uma montanha ou rochedo.
     """
-    return obter_pos_x(p) == 0 or obter_pos_y(p) == 0 or obter_pos_x(p) == obter_pos_x(m['mapa']) or \
-           obter_pos_y(p) == obter_pos_y(m['mapa']) or p in m['rochedos']
-          # (posicoes_iguais(m['rochedos'][i], p) for i in range(len(m['rochedos'])))
-# p in m['rochedos']
+    if obter_pos_x(p) == 0 or obter_pos_y(p) == 0 or obter_pos_x(p) == obter_pos_x(m['mapa']) or \
+            obter_pos_y(p) == obter_pos_y(m['mapa']):  # p eh a pos de uma montanha
+        return True
+    for ind_r in range(len(m['rochedos'])):
+        if posicoes_iguais(p, m['rochedos'][ind_r]):  # p eh a pos de um rochedo
+            return True
+    return False
 
 
 def eh_posicao_livre(m, p):
@@ -525,20 +563,21 @@ def obter_movimento(m, p):
     """
     obter_movimento: prado × posicao → posicao
     Devolve a posicao seguinte do animal na posicao p no prado m, segundo as regras de movimento dos animais.
-    """                  # lista de pos adjacentes livres e sem montanhas
+    """  # lista de pos adjacentes livres e sem montanhas
     pos_adj = list(filter(lambda pos: (0 < obter_pos_x(pos) < obter_tamanho_x(m) - 1 and 0 < obter_pos_y(pos) <
-                                  obter_tamanho_y(m) - 1), obter_posicoes_adjacentes(p)))
+                                       obter_tamanho_y(m) - 1), obter_posicoes_adjacentes(p)))
     if eh_predador(obter_animal(m, p)):
         pos_presas = []
         for pos in pos_adj:
             if eh_posicao_animal(m, pos) and eh_presa(obter_animal(m, pos)):
-                pos_presas += [pos]          # o predador come as presas, ocupando as suas pos
+                pos_presas += [pos]  # o predador come as presas, ocupando as suas pos
         if pos_presas != []:
-            return pos_presas[obter_valor_numerico(m, p) % len(pos_presas)]   # ponho um ELSE?
+            return pos_presas[obter_valor_numerico(m, p) % len(pos_presas)]  # ponho um ELSE?
     pos_livres = list(filter(lambda x: eh_posicao_livre(m, x), pos_adj))
     if pos_livres != []:
         return pos_livres[obter_valor_numerico(m, p) % len(pos_livres)]  # resto de valor de pos atual//num pos livres
-    return p    # quando nao ha posicoes livres, nao se move
+    return p  # quando nao ha posicoes livres, nao se move
+
 
 # VERIFICAR SE POSSO CONSIDERAR Q O ANIMAL N MOVE EM OBTER MOVS
 
@@ -550,22 +589,27 @@ def geracao(m):
     """
     for pos_a in obter_posicao_animais(m):
         a = obter_animal(m, pos_a)
-        if eh_predador(a):      # a fome so aumenta nos predadores
+        if eh_predador(a):  # a fome so aumenta nos predadores
             aumenta_fome(a)
-        if not eh_animal_fertil(a):    # qd eh fertil, a idade so voltará a aumentar apos reproduzir-se
+        if not eh_animal_fertil(a):  # qd eh fertil, a idade so voltará a aumentar apos reproduzir-se
             aumenta_idade(a)
 
         pos_f = obter_movimento(m, pos_a)
-        if pos_f != pos_a:                      # move se quando as pos sao !=
-            if eh_predador(a) and eh_posicao_animal(m, pos_f):     # quando o predador come a presa e ocupa a sua pos
-                eliminar_animal(m, pos_f)       # a presa morre
-                reset_fome(a)                   # a fome passa a 0
+        if pos_f != pos_a:  # move se quando as pos sao !=
+            if eh_predador(a) and eh_posicao_animal(m, pos_f):  # quando o predador come a presa e ocupa a sua pos
+                eliminar_animal(m, pos_f)  # a presa morre
+                reset_fome(a)  # a fome passa a 0
             mover_animal(m, pos_a, pos_f)
-            if eh_animal_fertil(a):                    # so se reproduz qd se moveu e eh fertil
-                inserir_animal(m, reproduz_animal(a), pos_a)        # o animal-filho ocupa a pos anterior do pai
+            if eh_animal_fertil(a):  # so se reproduz qd se moveu e eh fertil
+                inserir_animal(m, reproduz_animal(a), pos_a)  # o animal-filho ocupa a pos anterior do pai
         if eh_animal_faminto(a):
-            eliminar_animal(m, pos_f)       # morre ah fome
+            eliminar_animal(m, pos_f)  # morre ah fome
     return m
 
 
+def simula_ecossistema(f, g, v):
+    """
+    simula_ecossistema: str x int x booleano → tuplo
 
+    """
+    
