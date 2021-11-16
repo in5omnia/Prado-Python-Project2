@@ -298,8 +298,7 @@ def cria_prado(d, r, a, p):
     if not eh_posicao(d) or type(r) != tuple or type(a) != tuple or len(a) < 1 or type(p) != tuple or len(p) != len(a):
         raise ValueError('cria_prado: argumentos invalidos')
     for rochedo in r:
-        if not eh_posicao(rochedo) or obter_pos_x(rochedo) == 0 or obter_pos_x(rochedo) >= obter_pos_x(d) or \
-                obter_pos_y(rochedo) == 0 or obter_pos_y(rochedo) >= obter_pos_y(d):
+        if not eh_posicao(rochedo) or not (0 < obter_pos_x(rochedo) < obter_pos_x(d)) or not (0 < obter_pos_y(rochedo) < obter_pos_y(d)):
             raise ValueError('cria_prado: argumentos invalidos')
     for ind_r in range(len(r)):       # se a mesma pos tiver rochedo e animal
         for ind_p in range(len(p)):
@@ -434,11 +433,13 @@ def eh_prado(arg):
     """
     if type(arg) != dict and len(arg) != 4 and (('mapa' and 'rochedos' and 'animais' and 'pos_animais') not in arg):
         return False
-    if not eh_posicao(arg['mapa']) or type(arg['rochedos']) != tuple or type(arg['animais']) != list or len(arg['animais']) < 1 or type(arg['pos_animais']) != list or len(arg['pos_animais']) != len(arg['animais']):
+    if not eh_posicao(arg['mapa']) or type(arg['rochedos']) != tuple or type(arg['animais']) != list or \
+            len(arg['animais']) < 1 or type(arg['pos_animais']) != list or \
+            len(arg['pos_animais']) != len(arg['animais']):
         return False
     for rochedo in arg['rochedos']:
-        if not eh_posicao(rochedo) or obter_pos_x(rochedo) == 0 or obter_pos_x(rochedo) >= obter_pos_x(arg['mapa']) or \
-                obter_pos_y(rochedo) == 0 or obter_pos_y(rochedo) >= obter_pos_y(arg['mapa']):
+        if not eh_posicao(rochedo) or not (0 < obter_pos_x(rochedo) < obter_pos_x(arg['mapa'])) or \
+                not (0 < obter_pos_y(rochedo) < obter_pos_y(arg['mapa'])):
             return False
     for ind_r in range(len(arg['rochedos'])):       # se a mesma pos tiver rochedo e animal
         for ind_pos_a in range(len(arg['pos_animais'])):
@@ -586,4 +587,3 @@ def geracao(m):
         if eh_animal_faminto(a):
             eliminar_animal(m, pos_f)       # morre ah fome
     return m
-
