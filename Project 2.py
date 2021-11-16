@@ -98,15 +98,16 @@ def ordenar_posicoes(t):
     return tuple(lst_p)
 
 
-def cria_animal(s, r, a):  # usando dicionarios
+def cria_animal(especie, f_reproducao, f_alimentacao):  # usando dicionarios
     """
     cria_animal: str × int × int → animal
     Construtor
     Devolve o animal de especie s, frequencia de reproducao r e frequencia de alimentacao a (quando a=0, eh uma presa).
     """
-    if type(s) != str or len(s) == 0 or not isinstance(r, int) or not isinstance(a, int) or r <= 0 or a < 0:
+    animal = {'especie': especie, 'f_reproducao': f_reproducao, 'f_alimentacao': f_alimentacao, 'idade': 0, 'fome': 0}
+    if not eh_animal(animal):
         raise ValueError('cria_animal: argumentos invalidos')
-    return {'especie': s, 'f_reproducao': r, 'f_alimentacao': a, 'idade': 0, 'fome': 0}
+    return animal
 
 
 def cria_copia_animal(a):
@@ -213,12 +214,17 @@ def eh_animal(arg):
     Reconhecedor
     Devolve True se o seu argumento é um TAD animal.
     """
-    return type(arg) == dict and len(arg) == 5 and ('especie' and 'f_reproducao' and 'f_alimentacao' and 'idade' and
-                                                    'fome') in arg and type(arg['especie']) == str and type(
-        arg['f_reproducao']) == int and \
-           type(arg['idade']) == int and type(arg['f_alimentacao']) == int and type(arg['fome']) == int and \
-           arg['idade'] >= 0 and arg['fome'] >= 0 and arg['f_reproducao'] > 0 and arg['f_alimentacao'] >= 0 \
-           and len(arg['especie']) > 0
+    if type(arg) != dict or len(arg) != 5:
+        return False
+    if ('especie' and 'f_reproducao' and 'f_alimentacao' and 'idade' and 'fome') not in arg:
+        return False
+    if type(arg['especie']) != str or len(arg['especie']) == 0 or type(arg['f_reproducao']) != int:
+        return False
+    if type(arg['idade']) != int or type(arg['f_alimentacao']) != int or type(arg['fome']) != int:
+        return False
+    if arg['idade'] < 0 or arg['fome'] < 0 or arg['f_reproducao'] <= 0 or arg['f_alimentacao'] < 0:
+        return False
+    return True
 
 
 def eh_predador(arg):
