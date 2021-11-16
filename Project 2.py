@@ -587,6 +587,7 @@ def geracao(m):
             if eh_predador(a) and eh_posicao_animal(m, pos_f):  # quando o predador come a presa e ocupa a sua pos
                 eliminar_animal(m, pos_f)  # a presa morre
                 reset_fome(a)  # a fome passa a 0
+
             mover_animal(m, pos_a, pos_f)
             if eh_animal_fertil(a):  # so se reproduz qd se moveu e eh fertil
                 inserir_animal(m, reproduz_animal(a), pos_a)  # o animal-filho ocupa a pos anterior do pai
@@ -598,19 +599,19 @@ def geracao(m):
 def simula_ecossistema(f, g, v):
     """
     simula_ecossistema: str x int x booleano → tuplo
-
+    Funcao que escreve o prado, o numero de presas devolve um tuplo com o numero de predadores e presas no prado no fim da simulacao.
     """
     def str_para_posicao(cadeia):
         """
-        str -> posicao
+        str_para_posicao: str -> posicao
         Funcao auxiliar que devolve a posicao correspondente ah cad. de caracteres.
         """
         return cria_posicao(eval(cadeia[1]), eval(cadeia[-2]))
 
     def escreve_geracao(prado, geracao):
         """
-        prado x int -> str
-        Funcao auxiliar que
+        escreve_geracao: prado x int -> str
+        Funcao auxiliar que escreve o prado pela saida standard, o numero de presas e predadores, e o numero da geracao.
         """
         return f'Predadores: {obter_numero_predadores(prado)} vs Presas: {obter_numero_presas(prado)} \
 (Gen. {geracao})\n' + prado_para_str(prado)
@@ -618,10 +619,12 @@ def simula_ecossistema(f, g, v):
     with open(f, 'r') as fich_config:
         linha1 = fich_config.readline()[:-1]  # tira \n da linha
         limite = str_para_posicao(linha1)
+
         linha2 = eval(fich_config.readline()[:-1])
         rochedos = ()
         for rochedo_em_str in linha2:
             rochedos += (str_para_posicao(rochedo_em_str),)
+
         linhas_animais = fich_config.readlines()[:-1]
         animais = ()
         pos_animais = ()
@@ -630,4 +633,27 @@ def simula_ecossistema(f, g, v):
             pos_animais += (str_para_posicao(eval(linha_animal)[3]))
 
     prado = cria_prado(limite, rochedos, animais, pos_animais)
-    inicio_simulacao = escreve_geracao(prado, 0) + '\n'
+    print(escreve_geracao(prado, 0))
+
+    if v:
+        for n_geracao in range(1, g):
+            n_predadores_inicio = obter_numero_predadores(prado)
+            n_presas_inicio = obter_numero_presas(prado)
+
+            prado = geracao(prado)
+
+            n_predadores_fim = obter_numero_predadores(prado)
+            n_presas_fim = obter_numero_presas(prado)
+
+            if n_predadores_inicio != n_predadores_fim or n_presas_inicio != n_presas_fim:
+                print(escreve_geracao(prado, n_geracao))
+    else:
+        for n_geracao in range(1, g + 1):
+            prado = geracao(prado)
+
+    prado = geracao(prado)
+    print(escreve_geracao(prado, g))
+
+    return obter_numero_predadores(prado), obter_numero_presas(prado)
+
+
