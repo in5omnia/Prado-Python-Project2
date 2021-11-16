@@ -601,12 +601,12 @@ def simula_ecossistema(f, g, v):
     simula_ecossistema: str x int x booleano → tuplo
     Funcao que escreve o prado, o numero de presas devolve um tuplo com o numero de predadores e presas no prado no fim da simulacao.
     """
-    def str_para_posicao(cadeia):
+    def tuplo_para_posicao(tuplo):
         """
-        str_para_posicao: str -> posicao
-        Funcao auxiliar que devolve a posicao correspondente ah cad. de caracteres.
+        str_para_posicao: tuplo -> posicao
+        Funcao auxiliar que devolve a posicao correspondente ao tuplo.
         """
-        return cria_posicao(eval(cadeia[1]), eval(cadeia[-2]))
+        return cria_posicao(tuplo[0], tuplo[1])
 
     def escreve_geracao(prado, geracao):
         """
@@ -617,26 +617,26 @@ def simula_ecossistema(f, g, v):
 (Gen. {geracao})\n' + prado_para_str(prado)
 
     with open(f, 'r') as fich_config:
-        linha1 = fich_config.readline()[:-1]  # tira \n da linha
-        limite = str_para_posicao(linha1)
+        linha1 = eval(fich_config.readline())  # tira \n da linha
+        limite = tuplo_para_posicao(linha1)
 
-        linha2 = eval(fich_config.readline()[:-1])
+        linha2 = eval(fich_config.readline())
         rochedos = ()
         for rochedo_em_str in linha2:
-            rochedos += (str_para_posicao(rochedo_em_str),)
+            rochedos += (tuplo_para_posicao(rochedo_em_str),)
 
-        linhas_animais = fich_config.readlines()[:-1]
+        linhas_animais = fich_config.readlines()
         animais = ()
         pos_animais = ()
         for linha_animal in linhas_animais:
             animais += (cria_animal(eval(linha_animal)[0], eval(linha_animal)[1], eval(linha_animal)[2]),)
-            pos_animais += (str_para_posicao(eval(linha_animal)[3]))
+            pos_animais += (tuplo_para_posicao(eval(linha_animal)[3]),)
 
     prado = cria_prado(limite, rochedos, animais, pos_animais)
     print(escreve_geracao(prado, 0))
 
     if v:
-        for n_geracao in range(1, g):
+        for n_geracao in range(1, g + 1):
             n_predadores_inicio = obter_numero_predadores(prado)
             n_presas_inicio = obter_numero_presas(prado)
 
@@ -650,10 +650,11 @@ def simula_ecossistema(f, g, v):
     else:
         for n_geracao in range(1, g + 1):
             prado = geracao(prado)
-
-    prado = geracao(prado)
-    print(escreve_geracao(prado, g))
+        print(escreve_geracao(prado, g))
 
     return obter_numero_predadores(prado), obter_numero_presas(prado)
+
+
+print(simula_ecossistema('opop.txt', 200, True))
 
 
