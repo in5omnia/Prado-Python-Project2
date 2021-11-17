@@ -608,24 +608,40 @@ def geracao(m):
     geracao: prado → prado
     Funcao auxiliar que devolve o prado m, modificado de acordo com a evolucao correspondente a uma geracao completa.
     """
+    pred_q_comeram_frente = []
+    continua = True
     for pos_a in obter_posicao_animais(m):
-        a = obter_animal(m, pos_a)
-        if eh_predador(a):  # a fome so aumenta nos predadores
-            aumenta_fome(a)
-        if not eh_animal_fertil(a):  # qd eh fertil, a idade so voltará a aumentar apos reproduzir-se
-            aumenta_idade(a)
 
-        pos_f = obter_movimento(m, pos_a)
-        if pos_f != pos_a:  # move se quando as pos sao !=
-            if eh_predador(a) and eh_posicao_animal(m, pos_f):  # quando o predador come a presa e ocupa a sua pos
-                eliminar_animal(m, pos_f)  # a presa morre
-                reset_fome(a)  # a fome passa a 0
+        for pred_q_comeu_frente in pred_q_comeram_frente:
+            if posicoes_iguais(pos_a, pred_q_comeu_frente):
+                continua = False
 
-            mover_animal(m, pos_a, pos_f)
-            if eh_animal_fertil(a):  # so se reproduz qd se moveu e eh fertil
-                inserir_animal(m, reproduz_animal(a), pos_a)  # o animal-filho ocupa a pos anterior do pai
-        if eh_animal_faminto(a):
-            eliminar_animal(m, pos_f)  # morre ah fome
+        if continua:
+            a = obter_animal(m, pos_a)
+
+            if eh_predador(a):  # a fome so aumenta nos predadores
+                aumenta_fome(a)
+            if not eh_animal_fertil(a):  # qd eh fertil, a idade so voltará a aumentar apos reproduzir-se
+                aumenta_idade(a)
+
+            pos_f = obter_movimento(m, pos_a)
+            if pos_f != pos_a:  # move se quando as pos sao !=
+
+                if eh_predador(a) and eh_posicao_animal(m, pos_f):  # quando o predador come a presa e ocupa a sua pos
+                    eliminar_animal(m, pos_f)  # a presa morre
+                    reset_fome(a)  # a fome passa a 0
+
+                    if posicoes_iguais(ordenar_posicoes((pos_a, pos_f))[1], pos_f):
+                        pred_q_comeram_frente += [pos_f]
+
+                mover_animal(m, pos_a, pos_f)
+
+                if eh_animal_fertil(a):  # so se reproduz qd se moveu e eh fertil
+                    inserir_animal(m, reproduz_animal(a), pos_a)  # o animal-filho ocupa a pos anterior do pai
+
+            if eh_animal_faminto(a):
+                eliminar_animal(m, pos_f)  # morre ah fome
+
     return m
 
 
@@ -686,7 +702,4 @@ def simula_ecossistema(f, g, v):
         print(escreve_geracao(prado, g))
 
     return obter_numero_predadores(prado), obter_numero_presas(prado)
-
-
-#print(simula_ecossistema('opop.txt', 200, True))
 
