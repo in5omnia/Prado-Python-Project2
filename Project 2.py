@@ -1,3 +1,9 @@
+# Beatriz Gavilan
+# 17/11/2021
+# beatrizgavilan@tecnico.ulisboa.pt
+# Projeto 2 - simular geracoes num prado com animais e obstaculos
+
+
 def cria_posicao(x, y):  # usando listas
     """
     cria_posicao: int × int → posicao
@@ -767,3 +773,4 @@ def simula_ecossistema(ficheiro, num_geracoes, modo):
 
 
 print(simula_ecossistema('opop.txt', 100, True))
+
