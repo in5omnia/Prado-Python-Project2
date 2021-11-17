@@ -303,7 +303,7 @@ def reproduz_animal(a):
 
 
 def cria_prado(d, r, a, p):
-    prado = {'mapa': d, 'rochedos': r, 'animais': list(a), 'pos_animais': list(p)}
+    prado = {'limite': d, 'rochedos': r, 'animais': list(a), 'pos_animais': list(p)}
     if not eh_prado(prado):
         raise ValueError('cria_prado: argumentos invalidos')
     return prado  # animais e suas posicoes em listas
@@ -328,7 +328,7 @@ def cria_copia_prado(m):
         pos_animais += [cria_copia_posicao(pos)]
 
     return {
-        'mapa': cria_copia_posicao(m['mapa']),
+        'limite': cria_copia_posicao(m['limite']),
         'rochedos': rochedos,
         'animais': animais,
         'pos_animais': pos_animais
@@ -341,7 +341,7 @@ def obter_tamanho_x(m):
     Seletor
     Devolve o valor inteiro que corresponde ah dimensao Nx do prado.
     """
-    return obter_pos_x(m['mapa']) + 1
+    return obter_pos_x(m['limite']) + 1
 
 
 def obter_tamanho_y(m):
@@ -350,7 +350,7 @@ def obter_tamanho_y(m):
     Seletor
     Devolve o valor inteiro que corresponde ah dimensao Ny do prado.
     """
-    return obter_pos_y(m['mapa']) + 1
+    return obter_pos_y(m['limite']) + 1
 
 
 def obter_numero_predadores(m):
@@ -437,15 +437,15 @@ def eh_prado(arg):
     Reconhecedor
     Devolve True se o argumento é um TAD prado.
     """
-    if type(arg) != dict and len(arg) != 4 and (('mapa' and 'rochedos' and 'animais' and 'pos_animais') not in arg):
+    if type(arg) != dict and len(arg) != 4 and (('limite' and 'rochedos' and 'animais' and 'pos_animais') not in arg):
         return False
-    if not eh_posicao(arg['mapa']) or type(arg['rochedos']) != tuple or type(arg['animais']) != list or \
+    if not eh_posicao(arg['limite']) or type(arg['rochedos']) != tuple or type(arg['animais']) != list or \
             len(arg['animais']) < 1 or type(arg['pos_animais']) != list or \
             len(arg['pos_animais']) != len(arg['animais']):
         return False
     for rochedo in arg['rochedos']:
-        if not eh_posicao(rochedo) or not (0 < obter_pos_x(rochedo) < obter_pos_x(arg['mapa'])) or \
-                not (0 < obter_pos_y(rochedo) < obter_pos_y(arg['mapa'])):
+        if not eh_posicao(rochedo) or not (0 < obter_pos_x(rochedo) < obter_pos_x(arg['limite'])) or \
+                not (0 < obter_pos_y(rochedo) < obter_pos_y(arg['limite'])):
             return False
     for ind_r in range(len(arg['rochedos'])):  # se a mesma pos tiver rochedo e animal
         for ind_pos_a in range(len(arg['pos_animais'])):
@@ -455,8 +455,8 @@ def eh_prado(arg):
         if not eh_animal(animal):
             return False
     for pos in arg['pos_animais']:
-        if not eh_posicao(pos) or not (0 < obter_pos_x(pos) < obter_pos_x(arg['mapa'])) or \
-                not (0 < obter_pos_y(pos) < obter_pos_y(arg['mapa'])):
+        if not eh_posicao(pos) or not (0 < obter_pos_x(pos) < obter_pos_x(arg['limite'])) or \
+                not (0 < obter_pos_y(pos) < obter_pos_y(arg['limite'])):
             return False
     for i in range(len(arg['pos_animais']) - 1):
         for e in range(i + 1, len(arg['pos_animais'])):
@@ -485,8 +485,8 @@ def eh_posicao_obstaculo(m, p):
     Reconhecedor
     Devolve True se a posicao p corresponde a uma montanha ou rochedo.
     """
-    if obter_pos_x(p) == 0 or obter_pos_y(p) == 0 or obter_pos_x(p) == obter_pos_x(m['mapa']) or \
-            obter_pos_y(p) == obter_pos_y(m['mapa']):  # p eh a pos de uma montanha
+    if obter_pos_x(p) == 0 or obter_pos_y(p) == 0 or obter_pos_x(p) == obter_pos_x(m['limite']) or \
+            obter_pos_y(p) == obter_pos_y(m['limite']):  # p eh a pos de uma montanha
         return True
     for ind_r in range(len(m['rochedos'])):
         if posicoes_iguais(p, m['rochedos'][ind_r]):  # p eh a pos de um rochedo
@@ -503,13 +503,46 @@ def eh_posicao_livre(m, p):
     return not eh_posicao_obstaculo(m, p) and not eh_posicao_animal(m, p)
 
 
-def prados_iguais(p1, p2):
+def prados_iguais(prado1, prado2):
     """
     prados_iguais: prado × prado → booleano
     Teste
     Devolve True se p1 e p2 sao prados e iguais.
     """
-    return eh_prado(p1) and eh_prado(p2) and p1 == p2
+    if not eh_prado(prado1) or not eh_prado(prado2):
+        return False
+
+    if not posicoes_iguais(prado1['limite'], prado2['limite']):     # posicoes limite sao iguais
+        return False
+
+    rochedos_prado1 = ordenar_posicoes(prado1['rochedos'])
+    rochedos_prado2 = ordenar_posicoes(prado2['rochedos'])
+    if len(rochedos_prado1) != len(rochedos_prado2) or len(prado1['animais']) != len(prado2['animais']):
+        return False
+    for i in range(len(rochedos_prado1)):               # rochedos na mesma posicao
+        if not posicoes_iguais(rochedos_prado1[i], rochedos_prado2[i]):
+            return False
+
+    pos_animais_prado1 = obter_posicao_animais(prado1)   # saem ja na ordem de leitura do prado
+    pos_animais_prado2 = obter_posicao_animais(prado2)
+    if len(pos_animais_prado1) != len(pos_animais_prado2):
+        return False
+    for i in range(len(pos_animais_prado1)):
+        pos_prado_1 = pos_animais_prado1[i]
+        pos_prado_2 = pos_animais_prado2[i]
+
+        if not posicoes_iguais(pos_prado_1, pos_prado_2):
+            return False
+
+        if not animais_iguais(obter_animal(prado1, pos_prado_1), obter_animal(prado2, pos_prado_2)):
+            return False
+
+    return True
+
+
+    #return eh_prado(prado1) and eh_prado(prado2) and prado1 == prado2
+    # obter_tamanho_x(p1) == obter_tamanho_x(p2) and obter_tamanho_y(p1) == obter_tamanho_y(p2)    ou   posicoes_iguais(p1['limite'], p2['limite'])
+    # ordenar_posicoes(p1['rochedos']), ordenar_posicoes(p2['rochedos']) ou depois de ordenar fazer cada rochedo com posicoes_iguais
 
 
 def prado_para_str(m):
@@ -655,6 +688,5 @@ def simula_ecossistema(f, g, v):
     return obter_numero_predadores(prado), obter_numero_presas(prado)
 
 
-print(simula_ecossistema('opop.txt', 200, True))
-
+#print(simula_ecossistema('opop.txt', 200, True))
 
