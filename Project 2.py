@@ -662,10 +662,10 @@ def geracao(prado):
     Funcao auxiliar que devolve o prado m, modificado de acordo com a evolucao correspondente a uma geracao completa.
     """
     pred_q_comeram_frente = []
-    continua = True
+
 
     for pos_a in obter_posicao_animais(prado):
-
+        continua = True
         for pred_q_comeu_frente in pred_q_comeram_frente:
             if posicoes_iguais(pos_a, pred_q_comeu_frente):
                 continua = False
@@ -766,3 +766,4 @@ def simula_ecossistema(ficheiro, num_geracoes, modo):
     return obter_numero_predadores(prado), obter_numero_presas(prado)       # tuplo com num de predadores e presas
 
 
+print(simula_ecossistema('opop.txt', 100, True))
