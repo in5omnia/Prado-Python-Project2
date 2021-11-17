@@ -481,7 +481,7 @@ def eh_prado(arg):
     if len(arg['animais']) < 1 or type(arg['pos_animais']) != list or len(arg['pos_animais']) != len(arg['animais']):
         return False
 
-    for rochedo in arg['rochedos']:         # se o rochedo nao esta dentro dos limites do prado
+    for rochedo in arg['rochedos']:        # se o rochedo nao esta dentro dos limites do prado ou esta numa montanha
         if not eh_posicao(rochedo) or not (0 < obter_pos_x(rochedo) < obter_pos_x(arg['limite'])) or \
                 not (0 < obter_pos_y(rochedo) < obter_pos_y(arg['limite'])):
             return False
@@ -491,11 +491,16 @@ def eh_prado(arg):
             if posicoes_iguais(arg['rochedos'][ind_rochedo], arg['pos_animais'][ind_pos_animal]):
                 return False
 
+    for i in range(len(arg['rochedos']) - 1):
+        for e in range(i + 1, len(arg['rochedos'])):
+            if posicoes_iguais(arg['rochedos'][i], arg['rochedos'][e]):  # se ha 2 ou + rochedos na mesma posicao
+                return False
+
     for animal in arg['animais']:
         if not eh_animal(animal):      # se nao for animal
             return False
 
-    for pos_animal in arg['pos_animais']:           # se o animal nao esta dentro dos limites do prado
+    for pos_animal in arg['pos_animais']:      # se o animal nao esta dentro dos limites do prado nem numa montanha
         if not eh_posicao(pos_animal) or not (0 < obter_pos_x(pos_animal) < obter_pos_x(arg['limite'])) or \
                 not (0 < obter_pos_y(pos_animal) < obter_pos_y(arg['limite'])):
             return False
@@ -770,3 +775,6 @@ def simula_ecossistema(ficheiro, num_geracoes, modo):
         print(escreve_geracao(prado, num_geracoes))
 
     return obter_numero_predadores(prado), obter_numero_presas(prado)       # tuplo com num de predadores e presas
+
+
+print(simula_ecossistema('opop.txt', 200, False))
