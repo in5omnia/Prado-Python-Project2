@@ -770,7 +770,3 @@ def simula_ecossistema(ficheiro, num_geracoes, modo):
         print(escreve_geracao(prado, num_geracoes))
 
     return obter_numero_predadores(prado), obter_numero_presas(prado)       # tuplo com num de predadores e presas
-
-
-print(simula_ecossistema('opop.txt', 100, True))
-
