@@ -115,12 +115,14 @@ def cria_animal(especie, f_reproducao, f_alimentacao):  # usando dicionarios
     Construtor
     Devolve o animal de especie s, frequencia de reproducao r e frequencia de alimentacao a (quando a=0, eh uma presa).
     """
-    animal = {'especie': especie, 'f_reproducao': f_reproducao, 'f_alimentacao': f_alimentacao, 'idade': 0, 'fome': 0}
 
-    if not eh_animal(animal):
+    if type(especie) != str or len(especie) == 0 or type(f_reproducao) != int or type(f_alimentacao) != int:
         raise ValueError('cria_animal: argumentos invalidos')
 
-    return animal
+    if f_reproducao <= 0 or f_alimentacao < 0:
+        raise ValueError('cria_animal: argumentos invalidos')
+
+    return {'especie': especie, 'f_reproducao': f_reproducao, 'f_alimentacao': f_alimentacao, 'idade': 0, 'fome': 0}
 
 
 def cria_copia_animal(animal):
