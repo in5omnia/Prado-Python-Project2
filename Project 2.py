@@ -697,39 +697,40 @@ def geracao(prado):
     """
     presas_comidas_frente = []
 
-    for pos_a in obter_posicao_animais(prado):
+    for pos_animal in obter_posicao_animais(prado):
         continua = True
 
         for presa_comida_frente in presas_comidas_frente:
-            if posicoes_iguais(pos_a, presa_comida_frente):
+            if posicoes_iguais(pos_animal, presa_comida_frente):
                 continua = False
 
         if continua:
-            animal = obter_animal(prado, pos_a)
+            animal = obter_animal(prado, pos_animal)
+            fertil = eh_animal_fertil(animal)
 
             if eh_predador(animal):     # a fome so aumenta nos predadores
                 aumenta_fome(animal)
-            if not eh_animal_fertil(animal):      # quando eh fertil, a idade so voltará a aumentar apos reproduzir-se
+            if not fertil:      # quando eh fertil, a idade so voltará a aumentar apos reproduzir-se
                 aumenta_idade(animal)
                 fertil = eh_animal_fertil(animal)
 
-            pos_f = obter_movimento(prado, pos_a)
-            if pos_f != pos_a:
+            pos_f = obter_movimento(prado, pos_animal)
+            if pos_f != pos_animal:
                 # quando o animal se vai mover (pos sao !=)
                 if eh_posicao_animal(prado, pos_f):  # predador come a presa e ocupa a sua pos
                     eliminar_animal(prado, pos_f)   # a presa morre
                     reset_fome(animal)      # a fome passa a 0
 
-                    if posicoes_iguais(ordenar_posicoes((pos_a, pos_f))[1], pos_f):  # se vai para uma casa ah frente
+                    if posicoes_iguais(ordenar_posicoes((pos_animal, pos_f))[1], pos_f):  # vai para uma pos ah frente
                         presas_comidas_frente += [pos_f]
 
                 if eh_animal_faminto(animal):
-                    eliminar_animal(prado, pos_a)   # morre ah fome
+                    eliminar_animal(prado, pos_animal)   # morre ah fome
                 else:
-                    mover_animal(prado, pos_a, pos_f)   # eh igual mover ou nao o animal se ele for morrer depois
+                    mover_animal(prado, pos_animal, pos_f)   # eh igual mover ou nao o animal se ele for morrer depois
 
                 if fertil:  # so se reproduz qd se moveu e eh fertil
-                    inserir_animal(prado, reproduz_animal(animal), pos_a)  # o animal-filho ocupa a pos anterior do pai
+                    inserir_animal(prado, reproduz_animal(animal), pos_animal)  # animal-filho ocupa pos anterior do pai
 
             else:   # nao se moveu
                 if eh_animal_faminto(animal):
