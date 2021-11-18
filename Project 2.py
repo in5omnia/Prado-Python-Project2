@@ -2,7 +2,6 @@
 # 17/11/2021
 # beatrizgavilan@tecnico.ulisboa.pt
 # Projeto 2 - simular geracoes num prado com animais e obstaculos
-import datetime
 
 def cria_posicao(x, y):  # usando listas
     """
