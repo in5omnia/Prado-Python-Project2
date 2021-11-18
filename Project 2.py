@@ -2,7 +2,7 @@
 # 17/11/2021
 # beatrizgavilan@tecnico.ulisboa.pt
 # Projeto 2 - simular geracoes num prado com animais e obstaculos
-
+import datetime
 
 def cria_posicao(x, y):  # usando listas
     """
@@ -645,10 +645,10 @@ def prado_para_str(prado):
     """
     Nx = obter_tamanho_x(prado) - 1     # numero de colunas exceto a coluna 0
     Ny = obter_tamanho_y(prado) - 1     # numero de linhas exceto a linha 0
-    l = ()
+    linhas_meio = ()
 
     for y in range(1, Ny):              # so percorre as linhas entre a primeira e a ultima
-        l += ('|',)               # representacao da coluna 0
+        linhas_meio += ('|',)               # representacao da coluna 0
 
         for x in range(1, Nx):              # so percorre as colunas entre a primeira e a ultima
             p = cria_posicao(x, y)
@@ -657,20 +657,20 @@ def prado_para_str(prado):
                 a = obter_animal(prado, p)
 
                 if eh_presa(a):
-                    l += (animal_para_char(a),)  # letra minuscula
+                    linhas_meio += (animal_para_char(a),)  # letra minuscula
 
                 else:
-                    l += (animal_para_char(a),)  # letra maiuscula
+                    linhas_meio += (animal_para_char(a),)  # letra maiuscula
 
             elif eh_posicao_obstaculo(prado, p):
-                l += ('@',)
+                linhas_meio += ('@',)
 
             else:  # posicoes livres
-                l += ('.',)
+                linhas_meio += ('.',)
 
-        l += ('|\n',)           # representacao da ultima coluna
+        linhas_meio += ('|\n',)           # representacao da ultima coluna
 
-    return '+' + '-' * (Nx - 1) + '+\n' + ''.join(l) + '+' + '-' * (Nx - 1) + '+'
+    return '+' + '-' * (Nx - 1) + '+\n' + ''.join(linhas_meio) + '+' + '-' * (Nx - 1) + '+'
 
 
 def obter_valor_numerico(prado, posicao):
@@ -756,13 +756,6 @@ def simula_ecossistema(ficheiro, num_geracoes, modo):
     Funcao que escreve o prado, o numero de presas e predadores dependendo do modo,
     e devolve um tuplo com o numero de predadores e presas no prado, no fim da simulacao.
     """
-    def tuplo_para_posicao(tuplo):
-        """
-        str_para_posicao: tuplo -> posicao
-        Funcao auxiliar que devolve a posicao correspondente ao tuplo dado.
-        """
-        return cria_posicao(tuplo[0], tuplo[1])
-
 
     def escreve_geracao(prado, geracao):
         """
@@ -774,22 +767,24 @@ def simula_ecossistema(ficheiro, num_geracoes, modo):
 
 
     with open(ficheiro, 'r') as fich_config:
-        linha1 = eval(fich_config.readline())  # tira \n da linha
-        limite = tuplo_para_posicao(linha1)
+        tuplo_linha1 = eval(fich_config.readline())  # tira \n da linha
+        limite = cria_posicao(tuplo_linha1[0], tuplo_linha1[1])
 
-        linha2 = eval(fich_config.readline())
+        tuplo_linha2 = eval(fich_config.readline())
         rochedos = ()
-        for rochedo_em_str in linha2:
-            rochedos += (tuplo_para_posicao(rochedo_em_str),)   # tuplo com posicoes dos rochedos
+        for rochedo_em_tuplo in tuplo_linha2:
+            rochedos += (cria_posicao(rochedo_em_tuplo[0], rochedo_em_tuplo[1]),)   # tuplo com posicoes dos rochedos
 
         linhas_animais = fich_config.readlines()
         animais = ()
         pos_animais = ()
 
         for linha_animal in linhas_animais:
-            animais += (cria_animal(eval(linha_animal)[0], eval(linha_animal)[1], eval(linha_animal)[2]),)
-            pos_animais += (tuplo_para_posicao(eval(linha_animal)[3]),)
+            tuplo_linha_animal = eval(linha_animal)
+            animais += (cria_animal(tuplo_linha_animal[0], tuplo_linha_animal[1], tuplo_linha_animal[2]),)
+            pos_animais += (cria_posicao(tuplo_linha_animal[3][0], tuplo_linha_animal[3][1]),)
                                                                     # tuplo com animais e tuplo com suas posicoes
+
     prado = cria_prado(limite, rochedos, animais, pos_animais)
     print(escreve_geracao(prado, 0))
 
