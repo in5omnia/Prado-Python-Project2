@@ -699,6 +699,8 @@ def geracao(prado):
 
     for pos_animal in obter_posicao_animais(prado):
         continua = True
+        # para so percorrer os animais comidos das linhas que interessam (atual e seguinte)
+        presas_comidas_frente = list(filter(lambda p: obter_pos_y(p) >= obter_pos_y(pos_animal), presas_comidas_frente))
 
         for presa_comida_frente in presas_comidas_frente:
             if posicoes_iguais(pos_animal, presa_comida_frente):
