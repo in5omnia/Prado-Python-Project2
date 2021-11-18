@@ -633,6 +633,7 @@ def prado_para_str(prado):
     Nx = obter_tamanho_x(prado) - 1     # numero de colunas exceto a coluna 0
     Ny = obter_tamanho_y(prado) - 1     # numero de linhas exceto a linha 0
     linhas_meio = ()
+    linha_limite = '+' + '-' * (Nx - 1) + '+'
 
     for y in range(1, Ny):              # so percorre as linhas entre a primeira e a ultima
         linhas_meio += ('|',)               # representacao da coluna 0
@@ -652,7 +653,7 @@ def prado_para_str(prado):
 
         linhas_meio += ('|\n',)           # representacao da ultima coluna
 
-    return '+' + '-' * (Nx - 1) + '+\n' + ''.join(linhas_meio) + '+' + '-' * (Nx - 1) + '+'
+    return linha_limite + '\n' + ''.join(linhas_meio) + linha_limite
 
 
 def obter_valor_numerico(prado, posicao):
@@ -694,22 +695,21 @@ def geracao(prado):
     geracao: prado → prado
     Funcao auxiliar que devolve o prado m, modificado de acordo com a evolucao correspondente a uma geracao completa.
     """
-    pred_q_comeram_frente = []
+    presas_comidas_frente = []
 
     for pos_a in obter_posicao_animais(prado):
         continua = True
 
-        for pred_q_comeu_frente in pred_q_comeram_frente:
-            if posicoes_iguais(pos_a, pred_q_comeu_frente):
+        for presa_comida_frente in presas_comidas_frente:
+            if posicoes_iguais(pos_a, presa_comida_frente):
                 continua = False
 
         if continua:
             animal = obter_animal(prado, pos_a)
-            fertil = eh_animal_fertil(animal)
 
             if eh_predador(animal):     # a fome so aumenta nos predadores
                 aumenta_fome(animal)
-            if not fertil:      # quando eh fertil, a idade so voltará a aumentar apos reproduzir-se
+            if not eh_animal_fertil(animal):      # quando eh fertil, a idade so voltará a aumentar apos reproduzir-se
                 aumenta_idade(animal)
                 fertil = eh_animal_fertil(animal)
 
@@ -721,7 +721,7 @@ def geracao(prado):
                     reset_fome(animal)      # a fome passa a 0
 
                     if posicoes_iguais(ordenar_posicoes((pos_a, pos_f))[1], pos_f):  # se vai para uma casa ah frente
-                        pred_q_comeram_frente += [pos_f]
+                        presas_comidas_frente += [pos_f]
 
                 if eh_animal_faminto(animal):
                     eliminar_animal(prado, pos_a)   # morre ah fome
@@ -797,9 +797,3 @@ def simula_ecossistema(ficheiro, num_geracoes, modo):
         print(escreve_geracao(prado, num_geracoes))
 
     return obter_numero_predadores(prado), obter_numero_presas(prado)       # tuplo com num de predadores e presas
-
-
-import datetime
-begin_time = datetime.datetime.now()
-print(simula_ecossistema('opop.txt', 50, True))
-print("\n\n\n\n\n\n\n", datetime.datetime.now()- begin_time)
