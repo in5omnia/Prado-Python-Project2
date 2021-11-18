@@ -338,6 +338,20 @@ def cria_prado(pos_limite, rochedos, animais, pos_animais):
     if numero_animais < 1 or numero_animais != len(animais):
         raise ValueError('cria_prado: argumentos invalidos')
 
+    for i in range(numero_animais):
+                                                # se animal esta fora dos limites do prado ou numa montanha
+        if not eh_posicao(pos_animais[i]) or not (0 < obter_pos_x(pos_animais[i]) < obter_pos_x(pos_limite)) or \
+                not (0 < obter_pos_y(pos_animais[i]) < obter_pos_y(pos_limite)):
+            raise ValueError('cria_prado: argumentos invalidos')
+
+        if not eh_animal(animais[i]):      # se nao for animal
+            raise ValueError('cria_prado: argumentos invalidos')
+
+        if i < numero_animais - 1:
+            for e in range(i + 1, numero_animais):
+                if posicoes_iguais(pos_animais[i], pos_animais[e]):  # se ha 2 ou + animais na mesma posicao
+                    raise ValueError('cria_prado: argumentos invalidos')
+
     for i in range(numero_rochedos):
                                             # se rochedo esta fora dos limites do prado ou numa montanha
         if not eh_posicao(rochedos[i]) or not (0 < obter_pos_x(rochedos[i]) < obter_pos_x(pos_limite)) or \
@@ -352,20 +366,6 @@ def cria_prado(pos_limite, rochedos, animais, pos_animais):
         for indice_animal in range(numero_animais):     # se a mesma pos tiver rochedo e animal
             if posicoes_iguais(rochedos[i], pos_animais[indice_animal]):
                 raise ValueError('cria_prado: argumentos invalidos')
-
-    for i in range(numero_animais):
-                                                # se animal esta fora dos limites do prado ou numa montanha
-        if not eh_posicao(pos_animais[i]) or not (0 < obter_pos_x(pos_animais[i]) < obter_pos_x(pos_limite)) or \
-                not (0 < obter_pos_y(pos_animais[i]) < obter_pos_y(pos_limite)):
-            raise ValueError('cria_prado: argumentos invalidos')
-
-        if not eh_animal(animais[i]):      # se nao for animal
-            raise ValueError('cria_prado: argumentos invalidos')
-
-        if i < numero_animais - 1:
-            for e in range(i + 1, numero_animais):
-                if posicoes_iguais(pos_animais[i], pos_animais[e]):  # se ha 2 ou + animais na mesma posicao
-                    raise ValueError('cria_prado: argumentos invalidos')
 
     return {'limite': pos_limite, 'rochedos': rochedos, 'animais': list(animais), 'pos_animais': list(pos_animais)}
 
@@ -518,6 +518,22 @@ def eh_prado(arg):
     if type(arg['pos_animais']) != list or numero_animais < 1 or numero_animais != len(arg['animais']):
         return False
 
+    for i in range(numero_animais):
+        # se animal esta fora dos limites do prado ou numa montanha
+        if not eh_posicao(arg['pos_animais'][i]) or \
+                not (0 < obter_pos_x(arg['pos_animais'][i]) < obter_pos_x(arg['limite'])) or \
+                not (0 < obter_pos_y(arg['pos_animais'][i]) < obter_pos_y(arg['limite'])):
+
+            return False
+
+        if not eh_animal(arg['animais'][i]):  # se nao for animal
+            return False
+
+        if i < numero_animais - 1:
+            for e in range(i + 1, numero_animais):
+                if posicoes_iguais(arg['pos_animais'][i], arg['pos_animais'][e]):  # se ha 2 ou + animais numa posicao
+                    return False
+
     for i in range(numero_rochedos):
         # se rochedo esta fora dos limites do prado ou numa montanha
         if not eh_posicao(arg['rochedos'][i]) or \
@@ -534,22 +550,6 @@ def eh_prado(arg):
         for indice_animal in range(numero_animais):  # se a mesma pos tiver rochedo e animal
             if posicoes_iguais(arg['rochedos'][i], arg['pos_animais'][indice_animal]):
                 return False
-
-    for i in range(numero_animais):
-        # se animal esta fora dos limites do prado ou numa montanha
-        if not eh_posicao(arg['pos_animais'][i]) or \
-                not (0 < obter_pos_x(arg['pos_animais'][i]) < obter_pos_x(arg['limite'])) or \
-                not (0 < obter_pos_y(arg['pos_animais'][i]) < obter_pos_y(arg['limite'])):
-
-            return False
-
-        if not eh_animal(arg['animais'][i]):  # se nao for animal
-            return False
-
-        if i < numero_animais - 1:
-            for e in range(i + 1, numero_animais):
-                if posicoes_iguais(arg['pos_animais'][i], arg['pos_animais'][e]):  # se ha 2 ou + animais numa posicao
-                    return False
 
     return True
 
