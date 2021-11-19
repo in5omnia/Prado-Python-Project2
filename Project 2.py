@@ -3,6 +3,18 @@
 # beatrizgavilan@tecnico.ulisboa.pt
 # Projeto 2 - simular geracoes num prado com animais e obstaculos
 
+
+        # TAD Posicao:
+
+# cria_posicao: int × int → posicao
+# cria_copia_posicao: posicao → posicao
+# obter_pos_x: posicao → int
+# obter_pos_y: posicao → int
+# eh_posicao: universal → booleano
+# posicoes_iguais: posicao × posicao → booleano
+# posicao_para_str: posicao → str
+
+
 def cria_posicao(x, y):  # usando listas
     """
     cria_posicao: int × int → posicao
@@ -80,8 +92,6 @@ def obter_posicoes_adjacentes(posicao):
     obter_posicoes_adjacentes: posicao → tuplo
     Devolve um tuplo com as posicoes adjacentes a p, ordenadas segundo o sentido horario.
     """
-    #if posicao == [0, 0]:
-        #return cria_posicao(1, 0), cria_posicao(0, 1)
 
     x = obter_pos_x(posicao)
     y = obter_pos_y(posicao)
@@ -111,6 +121,27 @@ def ordenar_posicoes(tuplo_posicoes):
         lista_posicoes[i] = lista_posicoes[i][2]   # substitui as coordenadas
                                                                                                 # pelas posicoes
     return tuple(lista_posicoes)
+
+
+        # TAD Animal:
+
+# cria_animal: str × int × int → animal
+# cria_copia_animal: animal → animal
+# obter_especie: animal → str
+# obter_freq_reproducao: animal → int
+# obter_freq_alimentacao: animal → int
+# obter_idade: animal → int
+# obter_fome: animal → int
+# aumenta_idade: animal → animal
+# reset_idade: animal → animal
+# aumenta_fome: animal → animal
+# reset_fome: animal → animal
+# eh_animal: universal → booleano
+# eh_predador: universal → booleano
+# eh_presa: universal → booleano
+# animais_iguais: animal × animal → booleano
+# animal_para_char: animal → str
+# animal_para_str: animal → str
 
 
 def cria_animal(especie, f_reproducao, f_alimentacao):  # usando dicionarios
@@ -326,6 +357,27 @@ def reproduz_animal(animal):
     do animal a para 0.
     """
     return reset_fome(cria_copia_animal(reset_idade(animal)))
+
+
+        # TAD Prado:
+
+# cria_prado: posicao × tuplo × tuplo × tuplo → prado
+# cria_copia_prado: prado → prado
+# obter_tamanho_x: prado → int
+# obter_tamanho_y: prado → int
+# obter_numero_predadores: prado → int
+# obter_numero_presas: prado → int
+# obter_posicao_animais: prado → tuplo posicoes
+# obter_animal: prado × posicao → animal
+# eliminar_animal: prado × posicao → prado
+# mover_animal: prado × posicao × posicao → prado
+# inserir_animal: prado × animal × posicao → prado
+# eh_prado: universal 􏰀→ booleano
+# eh_posicao_animal: prado × posicao → booleano
+# eh_posicao_obstaculo: prado × posicao → booleano
+# eh_posicao_livre: prado × posicao → booleano
+# prados_iguais: prado × prado → booleano
+# prado_para_str: prado → str
 
 
 def cria_prado(pos_limite, rochedos, animais, pos_animais):
@@ -800,3 +852,4 @@ def simula_ecossistema(ficheiro, num_geracoes, modo):
         print(escreve_geracao(prado, num_geracoes))
 
     return obter_numero_predadores(prado), obter_numero_presas(prado)       # tuplo com num de predadores e presas
+
