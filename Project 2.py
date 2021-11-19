@@ -6,6 +6,8 @@
 
         # TAD Posicao:
 
+# Representação interna: lista
+
 # cria_posicao: int × int → posicao
 # cria_copia_posicao: posicao → posicao
 # obter_pos_x: posicao → int
@@ -15,7 +17,7 @@
 # posicao_para_str: posicao → str
 
 
-def cria_posicao(x, y):  # usando listas
+def cria_posicao(x, y):
     """
     cria_posicao: int × int → posicao
     Construtor
@@ -124,6 +126,8 @@ def ordenar_posicoes(tuplo_posicoes):
 
 
         # TAD Animal:
+
+# Representação interna: dicionário
 
 # cria_animal: str × int × int → animal
 # cria_copia_animal: animal → animal
@@ -360,6 +364,8 @@ def reproduz_animal(animal):
 
 
         # TAD Prado:
+
+# Representação interna: dicionário
 
 # cria_prado: posicao × tuplo × tuplo × tuplo → prado
 # cria_copia_prado: prado → prado
@@ -750,6 +756,7 @@ def geracao(prado):
     presas_comidas_frente = []
 
     for pos_animal in obter_posicao_animais(prado):
+
         continua = True
         # para so percorrer os animais comidos das linhas que interessam (atual e seguinte)
         presas_comidas_frente = list(filter(lambda p: obter_pos_y(p) >= obter_pos_y(pos_animal), presas_comidas_frente))
